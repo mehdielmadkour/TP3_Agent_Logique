@@ -4,6 +4,8 @@
 #include "Fait.h"
 #include "Rule.h"
 #include <list>
+#include <string>
+#include <fstream>
 
 using namespace std;
 typedef pair<int, int> Pair;
@@ -24,8 +26,10 @@ private:
 	vector<Rule> getApplicableRules(Fait fait);
 	Pair getSafeNeighbor(vector<Pair> neighbors);
 	Pair getMonstreNeighbor(vector<Pair> neighbors);
+	void parseRules(string rules);
+	vector<string> split(const string& str, const string& delim);
 public:
-	Agent(Forest* forest, vector<Rule> rules);
+	Agent(Forest* forest, string rules);
 	void setNewForest(Forest* forest);
 
 };

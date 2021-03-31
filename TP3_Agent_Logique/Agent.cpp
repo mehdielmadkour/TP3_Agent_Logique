@@ -1,7 +1,9 @@
 #include "Agent.h"
 
-Agent::Agent(Forest* forest, vector<Rule> rules) {
-	this->rules = rules;
+Agent::Agent(Forest* forest, string rules) {
+	
+	parseRules(rules);
+
 	score = 0;
 	setNewForest(forest);
 
@@ -31,6 +33,42 @@ void Agent::setNewForest(Forest* forest) {
 	cout << "Nouvelle foret de taille " << forestSize << endl;
 }
 
+void Agent::parseRules(string rules) {
+	fstream fs;
+	fs.open(rules, fstream::in);
+
+	string line;
+	int l = -1;
+
+	while (getline(fs, line)) {
+		
+		vector<string> splitedRule = split(line, " ==> ");
+
+		if (splitedRule.size() == 2) {
+
+			string premisses = splitedRule[0];
+			string result = splitedRule[1];
+
+			this->rules.push_back(Rule(premisses, result));
+		}
+	}
+
+}
+
+vector<string> Agent::split(const string& str, const string& delim) {
+	vector<string> tokens;
+	size_t prev = 0, pos = 0;
+	do
+	{
+		pos = str.find(delim, prev);
+		if (pos == string::npos) pos = str.length();
+		string token = str.substr(prev, pos - prev);
+		if (!token.empty()) tokens.push_back(token);
+		prev = pos + delim.length();
+	} while (pos < str.length() && prev < str.length());
+	return tokens;
+}
+
 vector<Pair> Agent::getUnexploredNeighbors() {
 
 	vector<Pair> unexploredNeighbors;
@@ -57,16 +95,7 @@ vector<Pair> Agent::getUnexploredNeighbors() {
 
 Pair Agent::getSafeNeighbor(vector<Pair> neighbors) {
 	
-	random_device rd;
-	mt19937 mt(rd());
-	uniform_real_distribution<double> dist(0.0, (double) neighbors.size());
-
-	return neighbors[dist(mt)];
-}
-
-Pair Agent::getMonstreNeighbor(vector<Pair> neighbors) {
-
-	Pair monstreNeighbor = make_pair(-1,-1);
+	vector<Pair> safeNeighbors;
 
 	for (Pair neighbor : neighbors) {
 
@@ -75,13 +104,43 @@ Pair Agent::getMonstreNeighbor(vector<Pair> neighbors) {
 
 		Fait fait = exploredGrid[x][y];
 
-		if (fait.etat == MONSTRE) {
-			monstreNeighbor = neighbor;
-			break;
+		if (fait.etat != MONSTRE_PROBABLE && fait.etat != CREVASSE_PROBABLE && fait.etat != MONSTRE_CREVASSE_PROBABLE) {
+			safeNeighbors.push_back(neighbor);
 		}
 	}
 
-	return monstreNeighbor;
+	if (safeNeighbors.size() == 0) return make_pair(-1, -1);
+	else {
+		random_device rd;
+		mt19937 mt(rd());
+		uniform_real_distribution<double> dist(0.0, (double)neighbors.size());
+		return safeNeighbors[dist(mt)];
+	}
+}
+
+Pair Agent::getMonstreNeighbor(vector<Pair> neighbors) {
+
+	vector<Pair> monstreNeighbors;
+
+	for (Pair neighbor : neighbors) {
+
+		int x = neighbor.first;
+		int y = neighbor.second;
+
+		Fait fait = exploredGrid[x][y];
+
+		if (fait.etat == MONSTRE || fait.etat == MONSTRE_PROBABLE) {
+			monstreNeighbors.push_back(neighbor);
+		}
+	}
+
+	if (monstreNeighbors.size() == 0) return make_pair(-1, -1);
+	else {
+		random_device rd;
+		mt19937 mt(rd());
+		uniform_real_distribution<double> dist(0.0, (double)neighbors.size());
+		return monstreNeighbors[dist(mt)];
+	}
 }
 
 vector<Rule> Agent::getApplicableRules(Fait fait) {

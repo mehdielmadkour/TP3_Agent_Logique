@@ -32,6 +32,7 @@ Rule::Rule(string premisses, string resultat) {
             if (splitedConditions[0] == "HAUT_DROITE") direction = HAUT_DROITE;
             if (splitedConditions[0] == "BAS_GAUCHE") direction = BAS_GAUCHE;
             if (splitedConditions[0] == "BAS_DROITE") direction = BAS_DROITE;
+            if (splitedConditions[0] == "POSITION") direction = POSITION;
 
             Etat etat;
             if (splitedConditions[1] == "PORTAIL") etat = PORTAIL;
@@ -122,6 +123,9 @@ bool Rule::isApplicable(Fait fait, vector<vector<Fait>> exploredGrid) {
                 if (exploredGrid[x + 1][y + 1].etat != INCONNU) applicable = true;
             }
         }
+        if (d == POSITION) {
+            applicable = true;
+        }
 
         results.push_back(applicable);
     }
@@ -176,12 +180,12 @@ Fait Rule::apply(Fait fait, vector<vector<Fait>> exploredGrid) {
             }
         }
         if (d == HAUT_DROITE) {
-            if (x + 1 >= 0 && y + 1 < exploredGrid.size()) {
+            if (x - 1 >= 0 && y + 1 < exploredGrid.size()) {
                 if (exploredGrid[x - 1][y + 1].etat == e) result = true;
             }
         }
         if (d == BAS_GAUCHE) {
-            if (x - 1 < exploredGrid.size() && y - 1 >= 0) {
+            if (x + 1 < exploredGrid.size() && y - 1 >= 0) {
                 if (exploredGrid[x + 1][y - 1].etat == e) result = true;
             }
         }
@@ -189,6 +193,9 @@ Fait Rule::apply(Fait fait, vector<vector<Fait>> exploredGrid) {
             if (x + 1 < exploredGrid.size() && y + 1 < exploredGrid.size()) {
                 if (exploredGrid[x + 1][y + 1].etat == e) result = true;
             }
+        }
+        if (d == POSITION) {
+            if (exploredGrid[x][y].etat == e) result = true;
         }
 
         results.push_back(result);
