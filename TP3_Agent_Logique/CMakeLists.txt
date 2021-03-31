@@ -4,6 +4,6 @@
 cmake_minimum_required (VERSION 3.8)
 
 # Ajoutez une source à l'exécutable de ce projet.
-add_executable (TP3_Agent_Logique "TP3_Agent_Logique.cpp" "TP3_Agent_Logique.h" "Forest.h" "Forest.cpp" "Sensor.h" "Sensor.cpp" "Effector.h" "Effector.cpp" "Fait.h" "Fait.cpp")
+add_executable (TP3_Agent_Logique "TP3_Agent_Logique.cpp" "TP3_Agent_Logique.h" "Forest.h" "Forest.cpp" "Sensor.h" "Sensor.cpp" "Effector.h" "Effector.cpp" "Fait.h" "Fait.cpp" "Rule.h" "Rule.cpp")
 
 # TODO: Ajoutez des tests et installez des cibles si nécessaire.
