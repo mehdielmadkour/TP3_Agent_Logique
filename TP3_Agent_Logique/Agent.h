@@ -21,6 +21,9 @@ private:
 	list<Fait> pile;
 	vector<Rule> rules;
 	void print();
+	vector<Rule> getApplicableRules(Fait fait);
+	Pair getSafeNeighbor(vector<Pair> neighbors);
+	Pair getMonstreNeighbor(vector<Pair> neighbors);
 public:
 	Agent(Forest* forest, vector<Rule> rules);
 	void setNewForest(Forest* forest);

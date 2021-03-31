@@ -8,5 +8,5 @@ private:
 
 public:
 	Sensor(Forest* foret);
-	Cell getCell(int x, int y);
+	Etat getCell(int x, int y);
 };

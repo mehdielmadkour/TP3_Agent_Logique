@@ -5,18 +5,20 @@
 
 using namespace std;
 
-enum Cell {
-	vide, agent, inconnu,
-	monstre, crevasse, monstre_crevasse,
-	odeur, vent, odeur_vent,
-	portail, portail_odeur, portail_vent, portail_odeur_vent
+enum Etat {
+	VIDE, AGENT, INCONNU,
+	MONSTRE, MONSTRE_PROBABLE,
+	CREVASSE, CREVASSE_PROBABLE,
+	MONSTRE_CREVASSE, MONSTRE_CREVASSE_PROBABLE,
+	MONSTRE_PROCHE, CREVASSE_PROCHE, MONSTRE_CREVASSE_PROCHE,
+	PORTAIL
 };
 
 class Forest {
 private:
 	int size;
-	vector<vector<Cell>> grid;
-	void setCell(int x, int y, Cell cell);
+	vector<vector<Etat>> grid;
+	void setCell(int x, int y, Etat cell);
 	void fillCells();
 	void placePortail();
 	void addOdeur(int x, int y);
@@ -27,7 +29,7 @@ private:
 public:
 	Forest(int size);
 	int getSize();
-	Cell getCell(int x, int y);
+	Etat getCell(int x, int y);
 	void print();
 	void move(int x, int y);
 	void shoot(int x, int y);

@@ -5,9 +5,9 @@ Effector::Effector(Forest* forest) {
 }
 
 void Effector::move(int x, int y) {
-	if (forest->getCell(x, y) == monstre || forest->getCell(x, y) == crevasse)
+	if (forest->getCell(x, y) == MONSTRE || forest->getCell(x, y) == CREVASSE || forest->getCell(x, y) == MONSTRE_CREVASSE)
 		cout << "died" << endl;
-	else if (forest->getCell(x, y) == portail)
+	else if (forest->getCell(x, y) == PORTAIL)
 		cout << "leave" << endl;
 	else
 		forest->move(x, y);

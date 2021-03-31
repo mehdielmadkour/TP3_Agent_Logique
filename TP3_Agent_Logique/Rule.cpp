@@ -50,6 +50,7 @@ Rule::Rule(string premisses, string resultat) {
         else {
             if (str == "OU") operations.push_back(OU);
             if (str == "ET") operations.push_back(ET);
+            if (str == "ET_NON") operations.push_back(ET_NON);
         }
 
         isPremisse = !isPremisse;
@@ -79,46 +80,46 @@ bool Rule::isApplicable(Fait fait, vector<vector<Fait>> exploredGrid) {
 
     for (Direction d : this->premisses) {
 
-        bool applicable = true;
+        bool applicable = false;
 
         if (d == HAUT) {
-            if (x + 1 < exploredGrid.size()) {
-                if (exploredGrid[x + 1][y].etat == INCONNU) applicable = false;
+            if (x - 1 >= 0) {
+                if (exploredGrid[x - 1][y].etat != INCONNU) applicable = true;
             }
         }
         if (d == BAS) {
-            if (x - 1 >= 0) {
-                if (exploredGrid[x - 1][y].etat == INCONNU) applicable = false;
+            if (x + 1 < exploredGrid.size()) {
+                if (exploredGrid[x + 1][y].etat != INCONNU) applicable = true;
             }
         }
         if (d == GAUCHE) {
             if (y - 1 >= 0) {
-                if (exploredGrid[x][y - 1].etat == INCONNU) applicable = false;
+                if (exploredGrid[x][y - 1].etat != INCONNU) applicable = true;
             }
         }
         if (d == DROITE) {
             if (y + 1 < exploredGrid.size()) {
-                if (exploredGrid[x][y + 1].etat == INCONNU) applicable = false;
+                if (exploredGrid[x][y + 1].etat != INCONNU) applicable = true;
             }
         }
         if (d == HAUT_GAUCHE) {
-            if (x + 1 < exploredGrid.size() && y - 1 >= 0) {
-                if (exploredGrid[x + 1][y - 1].etat == INCONNU) applicable = false;
+            if (x - 1 >= 0 && y - 1 >= 0) {
+                if (exploredGrid[x - 1][y - 1].etat != INCONNU) applicable = true;
             }
         }
         if (d == HAUT_DROITE) {
-            if (x + 1 < exploredGrid.size() && y + 1 < exploredGrid.size()) {
-                if (exploredGrid[x + 1][y + 1].etat == INCONNU) applicable = false;
+            if (x - 1 >= 0 && y + 1 < exploredGrid.size()) {
+                if (exploredGrid[x - 1][y + 1].etat != INCONNU) applicable = true;
             }
         }
         if (d == BAS_GAUCHE) {
             if (x + 1 < exploredGrid.size() && y - 1 >= 0) {
-                if (exploredGrid[x + 1][y - 1].etat == INCONNU) applicable = false;
+                if (exploredGrid[x + 1][y - 1].etat != INCONNU) applicable = true;
             }
         }
         if (d == BAS_DROITE) {
             if (x + 1 < exploredGrid.size() && y + 1 < exploredGrid.size()) {
-                if (exploredGrid[x + 1][y + 1].etat == INCONNU) applicable = false;
+                if (exploredGrid[x + 1][y + 1].etat != INCONNU) applicable = true;
             }
         }
 
@@ -130,6 +131,7 @@ bool Rule::isApplicable(Fait fait, vector<vector<Fait>> exploredGrid) {
     for (int i = 0; i < operations.size(); i++) {
         if (operations[i] == ET) result = result && results[i + 1];
         if (operations[i] == OU) result = result || results[i + 1];
+        if (operations[i] == ET_NON) result = result || !results[i + 1];
     }
 
     return result;
@@ -149,13 +151,13 @@ Fait Rule::apply(Fait fait, vector<vector<Fait>> exploredGrid) {
         bool result = false;
 
         if (d == HAUT) {
-            if (x + 1 < exploredGrid.size()) {
-                if (exploredGrid[x + 1][y].etat == e) result = true;
+            if (x - 1 >= 0) {
+                if (exploredGrid[x - 1][y].etat == e) result = true;
             }
         }
         if (d == BAS) {
-            if (x - 1 >= 0) {
-                if (exploredGrid[x - 1][y].etat == e) result = true;
+            if (x + 1 < exploredGrid.size()) {
+                if (exploredGrid[x + 1][y].etat == e) result = true;
             }
         }
         if (d == GAUCHE) {
@@ -169,17 +171,17 @@ Fait Rule::apply(Fait fait, vector<vector<Fait>> exploredGrid) {
             }
         }
         if (d == HAUT_GAUCHE) {
-            if (x + 1 < exploredGrid.size() && y - 1 >= 0) {
-                if (exploredGrid[x + 1][y - 1].etat == e) result = true;
+            if (x - 1 >= 0 && y - 1 >= 0) {
+                if (exploredGrid[x - 1][y - 1].etat == e) result = true;
             }
         }
         if (d == HAUT_DROITE) {
-            if (x + 1 < exploredGrid.size() && y + 1 < exploredGrid.size()) {
-                if (exploredGrid[x + 1][y + 1].etat == e) result = true;
+            if (x + 1 >= 0 && y + 1 < exploredGrid.size()) {
+                if (exploredGrid[x - 1][y + 1].etat == e) result = true;
             }
         }
         if (d == BAS_GAUCHE) {
-            if (x + 1 < exploredGrid.size() && y - 1 >= 0) {
+            if (x - 1 < exploredGrid.size() && y - 1 >= 0) {
                 if (exploredGrid[x + 1][y - 1].etat == e) result = true;
             }
         }
@@ -197,6 +199,7 @@ Fait Rule::apply(Fait fait, vector<vector<Fait>> exploredGrid) {
     for (int i = 0; i < operations.size(); i++) {
         if (operations[i] == ET) result = result && results[i + 1];
         if (operations[i] == OU) result = result || results[i + 1];
+        if (operations[i] == ET_NON) result = result || !results[i + 1];
     }
 
     if (result) fait.etat = resultat;

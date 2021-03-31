@@ -4,26 +4,26 @@ Forest::Forest(int size) {
 	this->size = size;
 
 	for (int x = 0; x < size; x++) {
-		vector<Cell> line;
+		vector<Etat> line;
 		for (int y = 0; y < size; y++) {
-			line.push_back(vide);
+			line.push_back(VIDE);
 		}
 		this->grid.push_back(line);
 	}
 	placePortail();
 	fillCells();
-	this->grid[0][0] = agent;
+	this->grid[0][0] = AGENT;
 }
 
 int Forest::getSize() {
 	return this->size;
 }
 
-Cell Forest::getCell(int x, int y) {
+Etat Forest::getCell(int x, int y) {
 	return this->grid[x][y];
 }
 
-void Forest::setCell(int x, int y, Cell cell) {
+void Forest::setCell(int x, int y, Etat cell) {
 	this->grid[x][y] = cell;
 }
 
@@ -43,14 +43,14 @@ void Forest::fillCells() {
 
 	for (int x = 0; x < size; x++) {
 		for (int y = 0; y < size; y++) {
-			if (this->grid[x][y] != portail) {
+			if (this->grid[x][y] != PORTAIL) {
 
 				if (x != 0 && y != 0) {
 					// monstre
 					if (dist(mt) < 10) addMonstre(x, y);
 
 					// crevasse
-					if (dist(mt) < 10) addCrevasse(x, y);
+					//if (dist(mt) < 10) addCrevasse(x, y);
 				}
 			}
 		}
@@ -60,33 +60,29 @@ void Forest::fillCells() {
 void Forest::placePortail() {
 	random_device rd;
 	mt19937 mt(rd());
-	uniform_real_distribution<double> dist(0.0, (double)size);
+	uniform_real_distribution<double> dist(1.0, (double)size);
 
 	int x = dist(mt);
 	int y = dist(mt);
 
-	this->grid[x][y] = portail;
+	this->grid[x][y] = PORTAIL;
 }
 
 void Forest::addOdeur(int x, int y) {
-	if (this->grid[x][y] == monstre || this->grid[x][y] == crevasse) return;
-	if (this->grid[x][y] == vide) this->grid[x][y] = odeur;
-	if (this->grid[x][y] == portail) this->grid[x][y] = portail_odeur;
-	if (this->grid[x][y] == portail_vent) this->grid[x][y] = portail_odeur_vent;
-	if (this->grid[x][y] == vent) this->grid[x][y] = odeur_vent;
+	if (this->grid[x][y] == MONSTRE || this->grid[x][y] == CREVASSE) return;
+	if (this->grid[x][y] == VIDE) this->grid[x][y] = MONSTRE_PROCHE;
+	if (this->grid[x][y] == CREVASSE_PROCHE) this->grid[x][y] = MONSTRE_CREVASSE_PROCHE;
 }
 
 void Forest::addVent(int x, int y) {
-	if (this->grid[x][y] == monstre || this->grid[x][y] == crevasse) return;
-	if (this->grid[x][y] == vide) this->grid[x][y] = vent;
-	if (this->grid[x][y] == portail) this->grid[x][y] = portail_vent;
-	if (this->grid[x][y] == portail_odeur) this->grid[x][y] = portail_odeur_vent;
-	if (this->grid[x][y] == odeur) this->grid[x][y] = odeur_vent;
+	if (this->grid[x][y] == MONSTRE || this->grid[x][y] == CREVASSE) return;
+	if (this->grid[x][y] == VIDE) this->grid[x][y] = CREVASSE_PROCHE;
+	if (this->grid[x][y] == MONSTRE_PROCHE) this->grid[x][y] = MONSTRE_CREVASSE_PROCHE;
 }
 
 void Forest::addMonstre(int x, int y) {
-	if (this->grid[x][y] == vide) this->grid[x][y] = monstre;
-	if (this->grid[x][y] == crevasse) this->grid[x][y] = monstre_crevasse;
+	if (this->grid[x][y] == VIDE) this->grid[x][y] = MONSTRE;
+	if (this->grid[x][y] == CREVASSE) this->grid[x][y] = MONSTRE_CREVASSE;
 
 	// diagonales
 	if (x - 1 >= 0 && y - 1 >= 0) addOdeur(x - 1, y - 1);
@@ -102,8 +98,8 @@ void Forest::addMonstre(int x, int y) {
 }
 
 void Forest::addCrevasse(int x, int y) {
-	if (this->grid[x][y] == vide) this->grid[x][y] = crevasse;
-	if (this->grid[x][y] == monstre) this->grid[x][y] = monstre_crevasse;
+	if (this->grid[x][y] == VIDE) this->grid[x][y] = CREVASSE;
+	if (this->grid[x][y] == MONSTRE) this->grid[x][y] = MONSTRE_CREVASSE;
 
 	// diagonales
 	if (x - 1 >= 0 && y - 1 >= 0) addVent(x - 1, y - 1);
@@ -119,10 +115,10 @@ void Forest::addCrevasse(int x, int y) {
 }
 
 void Forest::move(int x, int y) {
-	this->setCell(x, y, agent);
+	//this->setCell(x, y, AGENT);
 }
 
 void Forest::shoot(int x, int y) {
-	if (this->grid[x][y] == monstre) this->grid[x][y] = vide;
-	if (this->grid[x][y] == monstre_crevasse) this->grid[x][y] = crevasse;
+	if (this->grid[x][y] == MONSTRE) this->grid[x][y] = VIDE;
+	if (this->grid[x][y] == MONSTRE_CREVASSE) this->grid[x][y] = CREVASSE;
 }

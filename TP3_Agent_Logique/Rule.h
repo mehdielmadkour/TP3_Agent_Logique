@@ -3,8 +3,8 @@
 #include <string>
 #include "Fait.h"
 
-enum Direction { HAUT, BAS, GAUCHE, DROITE, HAUT_GAUCHE, HAUT_DROITE, BAS_GAUCHE, BAS_DROITE };
-enum Operation { ET, OU };
+enum Direction { POSITION, HAUT, BAS, GAUCHE, DROITE, HAUT_GAUCHE, HAUT_DROITE, BAS_GAUCHE, BAS_DROITE };
+enum Operation { ET, OU, ET_NON };
 class Rule {
 private:
 	Etat resultat;
