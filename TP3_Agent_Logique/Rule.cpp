@@ -12,8 +12,8 @@ Rule::Rule(string premisses, string resultat) {
     if (resultat == "CREVASSE_PROCHE") this->resultat = CREVASSE_PROCHE;
     if (resultat == "CREVASSE_PROBABLE") this->resultat = CREVASSE_PROBABLE;
 
+    // separation des premisses
     string delimiter = " ";
-
     vector<string> regle = split(premisses, " ");
 
     bool isPremisse = true;
@@ -21,6 +21,8 @@ Rule::Rule(string premisses, string resultat) {
     for (string str : regle) {
 
         if (isPremisse) {
+
+            // separation des directions et des etats
             vector<string> splitedConditions = split(str, "=");
 
             Direction direction;
@@ -58,31 +60,42 @@ Rule::Rule(string premisses, string resultat) {
     }
 }
 
-vector<string> Rule::split(const string& str, const string& delim) {
+vector<string> Agent::split(const string& str, const string& delim) {
+
     vector<string> tokens;
     size_t prev = 0, pos = 0;
+
     do
     {
+        // position du delimiteur
         pos = str.find(delim, prev);
         if (pos == string::npos) pos = str.length();
+
+        // texte compris entre le delimiteur courant et le delimiteur precedant
         string token = str.substr(prev, pos - prev);
         if (!token.empty()) tokens.push_back(token);
+
+        // mise a jour de la position du delimiteur precedant
         prev = pos + delim.length();
+
     } while (pos < str.length() && prev < str.length());
+
     return tokens;
 }
 
 bool Rule::isApplicable(Fait fait, vector<vector<Fait>> exploredGrid) {
+
     int x = fait.x;
     int y = fait.y;
 
     vector<bool> results;
 
-
+    // parcours la liste des directions nécessaire pour appliquer la regle
     for (Direction d : this->premisses) {
 
         bool applicable = false;
 
+        // teste si les etats des cases sont connus
         if (d == HAUT) {
             if (x - 1 >= 0) {
                 if (exploredGrid[x - 1][y].etat != INCONNU) applicable = true;
@@ -132,6 +145,7 @@ bool Rule::isApplicable(Fait fait, vector<vector<Fait>> exploredGrid) {
 
     bool result = results[0];
 
+    // applique les operateurs logique
     for (int i = 0; i < operations.size(); i++) {
         if (operations[i] == ET) result = result && results[i + 1];
         if (operations[i] == OU) result = result || results[i + 1];
@@ -147,6 +161,7 @@ Fait Rule::apply(Fait fait, vector<vector<Fait>> exploredGrid) {
     int x = fait.x;
     int y = fait.y;
 
+    // parcours la liste des conditions
     for (pair<Direction, Etat> condition : conditions) {
 
         Direction d = condition.first;
@@ -154,6 +169,7 @@ Fait Rule::apply(Fait fait, vector<vector<Fait>> exploredGrid) {
 
         bool result = false;
 
+        // teste si les etats des cases sont valide
         if (d == HAUT) {
             if (x - 1 >= 0) {
                 if (exploredGrid[x - 1][y].etat == e) result = true;
@@ -203,12 +219,14 @@ Fait Rule::apply(Fait fait, vector<vector<Fait>> exploredGrid) {
 
     bool result = results[0];
 
+    // applique les operateurs logique
     for (int i = 0; i < operations.size(); i++) {
         if (operations[i] == ET) result = result && results[i + 1];
         if (operations[i] == OU) result = result || results[i + 1];
         if (operations[i] == ET_NON) result = result || !results[i + 1];
     }
 
+    // applique le resultat si la regle est valide
     if (result) fait.etat = resultat;
 
     return fait;
