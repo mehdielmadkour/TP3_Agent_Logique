@@ -60,7 +60,7 @@ Rule::Rule(string premisses, string resultat) {
     }
 }
 
-vector<string> Agent::split(const string& str, const string& delim) {
+vector<string> Rule::split(const string& str, const string& delim) {
 
     vector<string> tokens;
     size_t prev = 0, pos = 0;

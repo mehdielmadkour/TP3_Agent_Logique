@@ -94,11 +94,7 @@ vector<Pair> Agent::getUnexploredNeighbors() {
 				if (x < forestSize - 1) if (exploredGrid[x + 1][y].etat != INCONNU) neighbor = true;
 				if (y > 0) if (exploredGrid[x][y - 1].etat != INCONNU) neighbor = true;
 				if (y < forestSize - 1) if (exploredGrid[x][y + 1].etat != INCONNU) neighbor = true;
-				if (x > 0 && y > 0) if (exploredGrid[x - 1][y - 1].etat != INCONNU) neighbor = true;
-				if (x < forestSize - 1 && y > 0) if (exploredGrid[x + 1][y - 1].etat != INCONNU) neighbor = true;
-				if (x > 0 && y < forestSize - 1) if (exploredGrid[x - 1][y + 1].etat != INCONNU) neighbor = true;
-				if (x < forestSize - 1 && y < forestSize - 1) if (exploredGrid[x + 1][y + 1].etat != INCONNU) neighbor = true;
-
+				
 				if (neighbor) unexploredNeighbors.push_back(make_pair(x, y));
 			}
 	return unexploredNeighbors;
@@ -125,11 +121,8 @@ Pair Agent::getSafeNeighbor(vector<Pair> neighbors) {
 	if (safeNeighbors.size() == 0) return make_pair(-1, -1);
 	else {
 
-		// selectionne aleatoirement une des cases
-		random_device rd;
-		mt19937 mt(rd());
-		uniform_real_distribution<double> dist(0.0, (double)neighbors.size());
-		return safeNeighbors[dist(mt)];
+		// selectionne la case la moins risqué
+		return ChooseLessRiskyMove(safeNeighbors);
 	}
 }
 
@@ -154,11 +147,8 @@ Pair Agent::getMonstreNeighbor(vector<Pair> neighbors) {
 	if (monstreNeighbors.size() == 0) return make_pair(-1, -1);
 	else {
 
-		// selectionne aleatoirement une des cases
-		random_device rd;
-		mt19937 mt(rd());
-		uniform_real_distribution<double> dist(0.0, (double)neighbors.size());
-		return monstreNeighbors[dist(mt)];
+		// selectionne la case la moins risqué
+		return ChooseLessRiskyMove(monstreNeighbors);
 	}
 }
 
@@ -250,46 +240,38 @@ void Agent::moteurInference() {
 
 	}
 }
+
 //On calcul le risque de tomber sur une case néfaste en regardant l'état de ses voisins
 float Agent::CalculateChance(int x, int y) 
 {
-	float c;
-	vector<Etat> neighbors;
+	float c = 0;
+
 	//On récupère tous les voisins de la case en argument
-	neighbors.push_back(sensor->getCell(x - 1, y));
-	neighbors.push_back(sensor->getCell(x + 1, y));
-	neighbors.push_back(sensor->getCell(x , y - 1));
-	neighbors.push_back(sensor->getCell(x + 1, y + 1));
-	while (!neighbors.empty()) 
+	vector<Etat> neighbors = getDirectNeighborsState(x, y);
+	for( Etat neighbor : neighbors)
 	{
 		//On vérifie si cette case pue ou est venteuse
-		if (neighbors.back() == MONSTRE_PROCHE|| neighbors.back() == CREVASSE_PROCHE)
+		if (neighbor == MONSTRE_PROCHE|| neighbor == CREVASSE_PROCHE)
 		{
 			//Si oui, il y a une chance sur 4 que la case cible soit concerné
-			c += 1 / 4;
-			neighbors.pop_back();
+			c += 1;
 		}
-		if (neighbors.back() == MONSTRE_CREVASSE_PROCHE)
+		if (neighbor == MONSTRE_CREVASSE_PROCHE)
 		{
 			// il y a deux raisons indépendante pour laquelle la case cible peut être concernée donc 1/4 + 1/4 = 1/2
-			c += 1 / 2;
-			neighbors.pop_back();
+			c += 2;
 		}
-		else 
-		{
-			//Si le voisin est inconnu ou qu'il ne présente pas de danger on n'incrémente pas le compteur
-			neighbors.pop_back();
-		}
+		//Si le voisin est inconnu ou qu'il ne présente pas de danger on n'incrémente pas le compteur
 	}
 	return c;
 }
 //Fonction qui permet de choisir le voisin le moins risqué parmis les voisins
-Pair Agent::ChooseRiskyMove(vector<Pair> neighbors)
+Pair Agent::ChooseLessRiskyMove(vector<Pair> neighbors)
 {
-	float r = 1;
+	float r = 4;
 	float tmp;
-	int x;
-	int y;
+	int x = neighbors[0].first;
+	int y = neighbors[0].second;
 	for (Pair neighbor : neighbors)
 	{
 		tmp = CalculateChance(neighbor.first, neighbor.second);
@@ -305,18 +287,43 @@ Pair Agent::ChooseRiskyMove(vector<Pair> neighbors)
 
 void Agent::print() {
 
-	cout << "grille connue				foret				score : " << score << endl;;
+	//cout << "grille connue				foret				score : " << score << endl;
+	cout << "grille connue" << endl;
 	for (int x = 0; x < forestSize; x++) {
 		for (int y = 0; y < forestSize; y++) {
 
 			if (exploredGrid[x][y].etat == INCONNU) cout << "  ";
 			else cout << " " << exploredGrid[x][y].etat ;
 		}
-		cout << "         ";
+		/*cout << "         ";
 		for (int y = 0; y < forestSize; y++) {
 
 			cout << " " << sensor->getCell(x, y);
-		}
+		}*/
 		cout << endl << endl;
 	}
+}
+
+vector<Pair> Agent::getDirectNeighbors(int x, int y) {
+
+	vector<Pair> neighbors;
+
+	if (x > 0) neighbors.push_back(make_pair(x - 1, y));
+	if (x < forestSize - 1) neighbors.push_back(make_pair(x + 1, y));
+	if (y > 0) neighbors.push_back(make_pair(x, y - 1));
+	if (y < forestSize - 1) neighbors.push_back(make_pair(x, y + 1));
+
+	return neighbors;
+}
+
+vector<Etat> Agent::getDirectNeighborsState(int x, int y) {
+
+	vector<Etat> neighbors;
+
+	if (x > 0) neighbors.push_back(exploredGrid[x - 1][y].etat);
+	if (x < forestSize - 1) neighbors.push_back(exploredGrid[x + 1][y].etat);
+	if (y > 0) neighbors.push_back(exploredGrid[x][y - 1].etat);
+	if (y < forestSize - 1) neighbors.push_back(exploredGrid[x][y + 1].etat);
+
+	return neighbors;
 }

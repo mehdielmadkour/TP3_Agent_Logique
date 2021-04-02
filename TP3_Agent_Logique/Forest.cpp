@@ -102,10 +102,6 @@ void Forest::addMonstre(int x, int y) {
 	if (this->grid[x][y] == CREVASSE) this->grid[x][y] = MONSTRE_CREVASSE;
 
 	// marque les cases adjacentes
-	if (x - 1 >= 0 && y - 1 >= 0) addOdeur(x - 1, y - 1);
-	if (x + 1 < size && y - 1 >= 0) addOdeur(x + 1, y - 1);
-	if (x - 1 >= 0 && y + 1 < size) addOdeur(x - 1, y + 1);
-	if (x + 1 < size && y + 1 < size) addOdeur(x + 1, y + 1);
 	if (x - 1 >= 0) addOdeur(x - 1, y);
 	if (x + 1 < size) addOdeur(x + 1, y);
 	if (y - 1 >= 0) addOdeur(x, y - 1);
@@ -120,10 +116,6 @@ void Forest::addCrevasse(int x, int y) {
 	if (this->grid[x][y] == MONSTRE) this->grid[x][y] = MONSTRE_CREVASSE;
 
 	// marque les cases adjacentes
-	if (x - 1 >= 0 && y - 1 >= 0) addVent(x - 1, y - 1);
-	if (x + 1 < size && y - 1 >= 0) addVent(x + 1, y - 1);
-	if (x - 1 >= 0 && y + 1 > size) addVent(x - 1, y + 1);
-	if (x + 1 < size && y + 1 > size) addVent(x + 1, y + 1);
 	if (x - 1 >= 0) addVent(x - 1, y);
 	if (x + 1 < size) addVent(x + 1, y);
 	if (y - 1 >= 0) addVent(x, y - 1);

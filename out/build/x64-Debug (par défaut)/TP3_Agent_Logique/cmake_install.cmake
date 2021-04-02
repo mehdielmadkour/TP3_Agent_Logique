@@ -1,8 +1,8 @@
-# Install script for directory: D:/Cours Canada/IA_2/TP3_Agent_Logique/TP3_Agent_Logique
+# Install script for directory: E:/c++ workspace/TP3_Agent_Logique/TP3_Agent_Logique
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "D:/Cours Canada/IA_2/TP3_Agent_Logique/out/install/x64-Debug (par défaut)")
+  set(CMAKE_INSTALL_PREFIX "E:/c++ workspace/TP3_Agent_Logique/out/install/x64-Debug (par défaut)")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
