@@ -218,7 +218,7 @@ void Agent::moteurInference() {
 				score -= 10;
 			}
 		}
-
+		
 		print();
 
 		cout << "Exploration de la case " << safeNeighbor.first << " " << safeNeighbor.second << endl;
@@ -255,24 +255,29 @@ float Agent::CalculateChance(int x, int y)
 {
 	float c;
 	vector<Etat> neighbors;
+	//On récupère tous les voisins de la case en argument
 	neighbors.push_back(sensor->getCell(x - 1, y));
 	neighbors.push_back(sensor->getCell(x + 1, y));
 	neighbors.push_back(sensor->getCell(x , y - 1));
 	neighbors.push_back(sensor->getCell(x + 1, y + 1));
 	while (!neighbors.empty()) 
 	{
+		//On vérifie si cette case pue ou est venteuse
 		if (neighbors.back() == MONSTRE_PROCHE|| neighbors.back() == CREVASSE_PROCHE)
 		{
+			//Si oui, il y a une chance sur 4 que la case cible soit concerné
 			c += 1 / 4;
 			neighbors.pop_back();
 		}
 		if (neighbors.back() == MONSTRE_CREVASSE_PROCHE)
 		{
+			// il y a deux raisons indépendante pour laquelle la case cible peut être concernée donc 1/4 + 1/4 = 1/2
 			c += 1 / 2;
 			neighbors.pop_back();
 		}
 		else 
 		{
+			//Si le voisin est inconnu ou qu'il ne présente pas de danger on n'incrémente pas le compteur
 			neighbors.pop_back();
 		}
 	}
