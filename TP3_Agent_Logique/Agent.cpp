@@ -287,19 +287,19 @@ Pair Agent::ChooseLessRiskyMove(vector<Pair> neighbors)
 
 void Agent::print() {
 
-	//cout << "grille connue				foret				score : " << score << endl;
-	cout << "grille connue" << endl;
+	cout << "grille connue				foret				score : " << score << endl;
+	//cout << "grille connue" << endl;
 	for (int x = 0; x < forestSize; x++) {
 		for (int y = 0; y < forestSize; y++) {
 
 			if (exploredGrid[x][y].etat == INCONNU) cout << "  ";
 			else cout << " " << exploredGrid[x][y].etat ;
 		}
-		/*cout << "         ";
+		cout << "         ";
 		for (int y = 0; y < forestSize; y++) {
 
 			cout << " " << sensor->getCell(x, y);
-		}*/
+		}
 		cout << endl << endl;
 	}
 }

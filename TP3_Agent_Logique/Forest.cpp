@@ -98,8 +98,8 @@ void Forest::addMonstre(int x, int y) {
 
 	// ajoute monstre a l'etat precedant
 
-	if (this->grid[x][y] == VIDE) this->grid[x][y] = MONSTRE;
 	if (this->grid[x][y] == CREVASSE) this->grid[x][y] = MONSTRE_CREVASSE;
+	else this->grid[x][y] = MONSTRE;
 
 	// marque les cases adjacentes
 	if (x - 1 >= 0) addOdeur(x - 1, y);
@@ -112,8 +112,8 @@ void Forest::addCrevasse(int x, int y) {
 
 	// ajoute crevasse a l'etat precedant
 
-	if (this->grid[x][y] == VIDE) this->grid[x][y] = CREVASSE;
 	if (this->grid[x][y] == MONSTRE) this->grid[x][y] = MONSTRE_CREVASSE;
+	else this->grid[x][y] = CREVASSE;
 
 	// marque les cases adjacentes
 	if (x - 1 >= 0) addVent(x - 1, y);

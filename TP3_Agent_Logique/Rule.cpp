@@ -149,7 +149,7 @@ bool Rule::isApplicable(Fait fait, vector<vector<Fait>> exploredGrid) {
     for (int i = 0; i < operations.size(); i++) {
         if (operations[i] == ET) result = result && results[i + 1];
         if (operations[i] == OU) result = result || results[i + 1];
-        if (operations[i] == ET_NON) result = result || !results[i + 1];
+        if (operations[i] == ET_NON) result = result && results[i + 1];
     }
 
     return result;
@@ -223,7 +223,7 @@ Fait Rule::apply(Fait fait, vector<vector<Fait>> exploredGrid) {
     for (int i = 0; i < operations.size(); i++) {
         if (operations[i] == ET) result = result && results[i + 1];
         if (operations[i] == OU) result = result || results[i + 1];
-        if (operations[i] == ET_NON) result = result || !results[i + 1];
+        if (operations[i] == ET_NON) result = result && !results[i + 1];
     }
 
     // applique le resultat si la regle est valide
