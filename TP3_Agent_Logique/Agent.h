@@ -28,6 +28,8 @@ private:
 	Pair getMonstreNeighbor(vector<Pair> neighbors);
 	void parseRules(string rules);
 	vector<string> split(const string& str, const string& delim);
+	float CalculateChance(int x, int y);
+	Pair ChooseRiskyMove(vector<Pair> neighbors);
 public:
 	Agent(Forest* forest, string rules);
 	void setNewForest(Forest* forest);

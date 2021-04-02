@@ -216,6 +216,53 @@ void Agent::moteurInference() {
 
 	}
 }
+//On calcul le risque de tomber sur une case néfaste en regardant l'état de ses voisins
+float Agent::CalculateChance(int x, int y) 
+{
+	float c;
+	vector<Etat> neighbors;
+	neighbors.push_back(sensor->getCell(x - 1, y));
+	neighbors.push_back(sensor->getCell(x + 1, y));
+	neighbors.push_back(sensor->getCell(x , y - 1));
+	neighbors.push_back(sensor->getCell(x + 1, y + 1));
+	while (!neighbors.empty()) 
+	{
+		if (neighbors.back() == MONSTRE_PROCHE|| neighbors.back() == CREVASSE_PROCHE)
+		{
+			c += 1 / 4;
+			neighbors.pop_back();
+		}
+		if (neighbors.back() == MONSTRE_CREVASSE_PROCHE)
+		{
+			c += 1 / 2;
+			neighbors.pop_back();
+		}
+		else 
+		{
+			neighbors.pop_back();
+		}
+	}
+	return c;
+}
+//Fonction qui permet de choisir le voisin le moins risqué parmis les voisins
+Pair Agent::ChooseRiskyMove(vector<Pair> neighbors)
+{
+	float r = 1;
+	float tmp;
+	int x;
+	int y;
+	for (Pair neighbor : neighbors)
+	{
+		tmp = CalculateChance(neighbor.first, neighbor.second);
+		if (tmp < r) 
+		{
+			r = tmp;
+			x = neighbor.first;
+			y = neighbor.second;
+		}
+	}
+	return Pair(x, y);
+}
 
 void Agent::print() {
 
